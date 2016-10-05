@@ -19,6 +19,10 @@ function question_init() {
     return new App\Question();
 }
 
+function answer_init() {
+    return new App\Answer();
+}
+
 Route::get('/', function () {
     return view('index');
 });
@@ -63,4 +67,8 @@ Route::any('/api/question/read', function () {
 
 Route::any('/api/question/remove', function () {
     return question_init()->remove();
+});
+
+Route::any('/api/answer/add', function () {
+    return answer_init()->add();
 });
