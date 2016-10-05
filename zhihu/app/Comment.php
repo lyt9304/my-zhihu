@@ -94,4 +94,54 @@ class Comment extends Model
 			['status' => 1, 'id' => $this->id] :
 			['status' => 0, 'msg' => '数据库保存失败'];
 	}
+
+	public function read() {
+		$answer_id = Request::get('answer_id');
+		$question_id = Request::get('question_id');
+
+		// 回复answer或者question, 有且只能有一个
+		if((!$answer_id && !$question_id)
+			||
+			($answer_id && $question_id)
+		) {
+			return [
+				'status' => '0',
+				'msg' => '必须只提供一个 answer id 或者 question id'
+			];
+		}
+
+		if($question_id) {
+			$question = question_init()->find($question_id);
+
+			if(!$question) {
+				return [
+					'status' => '0',
+					'msg' => '问题不存在'
+				];
+			}
+
+			$data = $this->where(['question_id' => $question_id])->get();
+		}
+
+		if($answer_id) {
+			$answer = answer_init()->find($answer_id);
+
+			if(!$answer) {
+				return [
+					'status' => '0',
+					'msg' => '回答不存在'
+				];
+			}
+			$data = $this->where(['answer_id' => $answer_id])->get();
+		}
+
+		return [
+			'status' => '1',
+			'data' => $data->keyBy('id')
+		];
+	}
+
+	public function remove() {
+		return 1;
+	}
 }

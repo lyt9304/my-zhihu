@@ -88,3 +88,11 @@ Route::any('/api/answer/read', function () {
 Route::any('/api/comment/add', function () {
     return comment_init()->add();
 });
+
+Route::any('/api/comment/read', function () {
+    return comment_init()->read();
+});
+
+Route::any('/api/comment/remove', function () {
+    return comment_init()->remove();
+});
