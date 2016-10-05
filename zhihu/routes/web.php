@@ -72,3 +72,11 @@ Route::any('/api/question/remove', function () {
 Route::any('/api/answer/add', function () {
     return answer_init()->add();
 });
+
+Route::any('/api/answer/change', function () {
+    return answer_init()->change();
+});
+
+Route::any('/api/answer/read', function () {
+    return answer_init()->read();
+});

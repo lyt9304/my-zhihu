@@ -83,9 +83,14 @@ class Question extends Model
 		$title = Request::get('title');
 		$desc = Request::get('desc');
 
-		if($title) {
-			$question->title = $title;
+		if(!$title) {
+			return [
+				'status' => '0',
+				'msg' => '问题标题不能为空'
+			];
 		}
+
+		$question->title = $title;
 
 		if($desc) {
 			$question->desc = $desc;
