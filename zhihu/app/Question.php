@@ -43,6 +43,10 @@ class Question extends Model
 			['status' => 0, 'msg' => '数据库保存失败'];
 	}
 
+	/**
+	 * 修改问题API
+	 * @return array
+	 */
 	public function change() {
 		if(!user_init()->is_logged_in()) {
 			return [
@@ -91,4 +95,35 @@ class Question extends Model
 			['status' => 1, 'id' => $question->id] :
 			['status' => 0, 'msg' => '数据库保存失败'];
 	}
+
+	/**
+	 * 查看问题API
+	 */
+	public function read() {
+		$id = Request::get('id');
+		if($id) {
+			return [
+				'status' => '1',
+				'data' => $this->find($id)
+			];
+		}
+
+//		如果不存在id, 则默认给予某几条
+		$limit = Request::get('limit')?:15;
+		$page = Request::get('page')?:1;
+		$skip = ($page - 1) * $limit;
+
+		$res = $this->orderBy('created_at')
+			->limit($limit)
+//			->get(['id', 'title', 'desc'])
+			->skip($skip)
+			->get()
+			->keyBy('id'); // get collection
+
+		return [
+			'status' => '1',
+			'data' => $res
+		];
+	}
+
 }
