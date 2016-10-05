@@ -23,6 +23,10 @@ function answer_init() {
     return new App\Answer();
 }
 
+function comment_init() {
+    return new App\Comment();
+}
+
 Route::get('/', function () {
     return view('index');
 });
@@ -79,4 +83,8 @@ Route::any('/api/answer/change', function () {
 
 Route::any('/api/answer/read', function () {
     return answer_init()->read();
+});
+
+Route::any('/api/comment/add', function () {
+    return comment_init()->add();
 });
