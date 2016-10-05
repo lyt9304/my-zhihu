@@ -3,10 +3,54 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Request;
 
 class Answer extends Model
 {
     public function add() {
-		return 1;
+		if(!user_init()->is_logged_in()) {
+			return [
+				'status' => '0',
+				'msg' => '需要登录'
+			];
+		}
+
+		$question_id = Request::get('question_id');
+		$content = Request::get('content');
+		$user_id = session('user_id');
+
+		if(!$question_id || !$content) {
+			return [
+				'status' => '0',
+				'msg' => '问题id和回答内容不能为空'
+			];
+		}
+
+		$question = question_init()->find($question_id);
+
+		if(!$question) {
+			return [
+				'status' => '0',
+				'msg' => '问题不存在'
+			];
+		}
+
+		$answer = $this->where(['user_id' => $user_id, 'question_id' => $question_id])
+					->count();
+
+		if($answer > 0) {
+			return [
+				'status' => '0',
+				'msg' => '同一问题不能回答两次'
+			];
+		}
+
+		$this->user_id = $user_id;
+		$this->content = $content;
+		$this->question_id = $question_id;
+
+		return $this->save() ?
+			['status' => 1, 'id' => $this->id] :
+			['status' => 0, 'msg' => '数据库保存失败'];
 	}
 }
