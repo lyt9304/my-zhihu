@@ -52,3 +52,7 @@ Route::any('/test/islogin', function () {
 Route::any('/api/question/add', function () {
     return question_init()->add();
 });
+
+Route::any('/api/question/change', function () {
+    return question_init()->change();
+});
