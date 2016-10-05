@@ -126,4 +126,42 @@ class Question extends Model
 		];
 	}
 
+	public function remove() {
+		if(!user_init()->is_logged_in()) {
+			return [
+				'status' => '0',
+				'msg' => '需要登录'
+			];
+		}
+
+		$id = Request::get('id');
+
+		if(!$id) {
+			return [
+				'status' => '0',
+				'msg' => '需要提供问题id'
+			];
+		}
+
+		$question = $this->find($id); // 返回 id = 1 的那个question model
+
+		if(!$question) {
+			return [
+				'status' => '0',
+				'msg' => '问题不存在'
+			];
+		}
+
+		if($question->user_id != session('user_id')) {
+			return [
+				'status' => '0',
+				'msg' => '没有权限删除问题'
+			];
+		}
+
+		return $question->delete() ?
+			['status' => 1] :
+			['status' => 0, 'msg' => '数据库删除失败'];
+	}
+
 }

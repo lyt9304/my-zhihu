@@ -60,3 +60,7 @@ Route::any('/api/question/change', function () {
 Route::any('/api/question/read', function () {
     return question_init()->read();
 });
+
+Route::any('/api/question/remove', function () {
+    return question_init()->remove();
+});
