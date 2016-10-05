@@ -15,6 +15,10 @@ function user_init() {
     return new App\User();
 }
 
+function question_init() {
+    return new App\Question();
+}
+
 Route::get('/', function () {
     return view('index');
 });
@@ -43,4 +47,8 @@ Route::any('/api/logout', function () {
 
 Route::any('/test/islogin', function () {
     dd(user_init()->is_logged_in());
+});
+
+Route::any('/api/question/add', function () {
+    return question_init()->add();
 });
