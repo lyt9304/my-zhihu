@@ -85,6 +85,10 @@ Route::any('/api/answer/read', function () {
     return answer_init()->read();
 });
 
+Route::any('/api/answer/vote', function () {
+    return answer_init()->vote();
+});
+
 Route::any('/api/comment/add', function () {
     return comment_init()->add();
 });

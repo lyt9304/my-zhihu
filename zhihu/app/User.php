@@ -133,4 +133,14 @@ class User extends Model
 	public function is_logged_in() {
 		return session('user_id') ?: false;
 	}
+
+	/**
+	 * 用于连接users和answers两张表
+	 */
+	public function answers() {
+		return $this
+			->belongsToMany('App\Answer') // 和user建立关系, 多对多关系
+			->withPivot('vote') // laravel不知道这个字段, 所以再这里需要注册一下
+			->withTimestamps(); // 保存会更新timestamps
+	}
 }

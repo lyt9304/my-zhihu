@@ -145,4 +145,62 @@ class Answer extends Model
 			];
 		}
 	}
+
+	public function vote() {
+		if(!user_init()->is_logged_in()) {
+			return [
+				'status' => '0',
+				'msg' => '需要登录'
+			];
+		}
+
+		$answer_id = Request::get('id');
+		$vote = Request::get('vote');
+		$user_id = session('user_id');
+
+		if(!$answer_id || !$vote) {
+			return [
+				'status' => '0',
+				'msg' => '缺少参数'
+			];
+		}
+
+		// 1: 赞同 2: 反对
+		$vote = $vote <= 1 ? 1 : 2;
+
+		$answer = $this->find($answer_id);
+
+		if(!$answer) {
+			return [
+				'status' => '0',
+				'msg' => '回答不存在'
+			];
+		}
+
+		$answer
+			->users()
+			->newPivotStatement() // 进入到连接表中进行操作
+			->where('user_id', $user_id)
+			->where('answer_id', $answer_id)
+			->delete();
+
+		$answer
+			->users()
+			->attach($user_id, ['vote' => (int) $vote]);
+
+		return [
+			'status' => 1
+		];
+	}
+
+	/**
+	 * 用于连接users和answers两张表
+	 */
+	public function users() {
+		return $this
+			->belongsToMany('App\User') // 和user建立关系, 多对多关系
+			->withPivot('vote') // laravel不知道这个字段, 所以再这里需要注册一下
+			->withTimestamps(); // 保存会更新timestamps
+	}
+
 }
