@@ -141,7 +141,51 @@ class Comment extends Model
 		];
 	}
 
+	public function removeRef($id) {
+		$models = $this->where(['reply_to' => $id])->get()->all();
+		foreach($models as $key => $item) {
+			if(!$item->removeRef((string)$item->id)) {
+				return false;
+			}
+		}
+		return $this->where(['id' => $id])->delete();
+	}
+
 	public function remove() {
-		return 1;
+		if(!user_init()->is_logged_in()) {
+			return [
+				'status' => '0',
+				'msg' => '需要登录'
+			];
+		}
+
+		$id = Request::get('id');
+
+		if(!$id) {
+			return [
+				'status' => '0',
+				'msg' => '需要提供评论id'
+			];
+		}
+
+		$comment = $this->find($id); // 返回 id = 1 的那个question model
+
+		if(!$comment) {
+			return [
+				'status' => '0',
+				'msg' => '评论不存在'
+			];
+		}
+
+		if($comment->user_id != session('user_id')) {
+			return [
+				'status' => '0',
+				'msg' => '没有权限删除评论'
+			];
+		}
+
+		return $this->removeRef($id) ?
+			['status' => 1] :
+			['status' => 0, 'msg' => '数据库删除失败'];
 	}
 }
